@@ -31,10 +31,16 @@ def joined_hands_from_landmarks(hands, width: int, height: int) -> bool:
     alignment = float(np.dot(*directions) /
                       max(1e-6, np.linalg.norm(directions[0]) * np.linalg.norm(directions[1])))
     fingertips = [hand[[8, 12, 16, 20]].mean(axis=0) for hand in points]
+    # Dita distese: i polpastrelli sono ben oltre le nocche rispetto al polso.
+    extended = all(
+        np.linalg.norm(tips - hand[0]) > np.linalg.norm(hand[9] - hand[0]) * 1.5
+        for tips, hand in zip(fingertips, points)
+    )
     return (
-        alignment > 0.25
-        and np.linalg.norm(palms[0] - palms[1]) < size * 1.55
-        and np.linalg.norm(fingertips[0] - fingertips[1]) < size * 1.9
+        extended
+        and alignment > 0.7
+        and np.linalg.norm(palms[0] - palms[1]) < size * 1.25
+        and np.linalg.norm(fingertips[0] - fingertips[1]) < size * 1.25
     )
 
 
@@ -56,7 +62,7 @@ def substitution_anchor(mask: np.ndarray) -> tuple[int, int, int]:
 def load_log() -> np.ndarray:
     sprite = cv2.imread(str(LOG_PATH), cv2.IMREAD_UNCHANGED)
     if sprite is None or sprite.ndim != 3 or sprite.shape[2] != 4:
-        raise RuntimeError(f"Sprite del tronco non disponibile: {LOG_PATH}")
+        raise RuntimeError(f"Imagem do tronco indisponível: {LOG_PATH}")
     return sprite
 
 

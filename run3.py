@@ -1,3 +1,4 @@
+import sys
 import time
 from pathlib import Path
 
@@ -44,12 +45,18 @@ def load_meme(path):
 
 
 def open_camera(index=0):
-    """Apre la webcam provando i backend Windows e attende il primo frame."""
-    backends = (
-        ("DirectShow", cv2.CAP_DSHOW),
-        ("Media Foundation", cv2.CAP_MSMF),
-        ("automatico", cv2.CAP_ANY),
-    )
+    """Apre la webcam provando i backend del sistema e attende il primo frame."""
+    if sys.platform == "darwin":
+        backends = (
+            ("AVFoundation", cv2.CAP_AVFOUNDATION),
+            ("automatico", cv2.CAP_ANY),
+        )
+    else:
+        backends = (
+            ("DirectShow", cv2.CAP_DSHOW),
+            ("Media Foundation", cv2.CAP_MSMF),
+            ("automatico", cv2.CAP_ANY),
+        )
     attempts = []
 
     for backend_name, backend in backends:

@@ -14,10 +14,18 @@ If you like this project and want to support it, you can buy me a coffee through
 
 The published EXE may predate the Particles and Goku modes. To use them now, run the local scripts or rebuild the EXE from these sources.
 
+## macOS
+
+1. Install Python 3.10–3.12 (`brew install python@3.12` or [python.org](https://www.python.org/downloads/macos/)).
+2. Double-click `AVVIA_MAC.command` (or run `./AVVIA_MAC.command` in Terminal). The first run creates `.venv-local` and installs the dependencies.
+3. When macOS asks, allow **Camera** access for Terminal (System Settings → Privacy & Security → Camera). If you denied it, enable it there and relaunch.
+
+`AVVIA_MAC_OBS.command` and `AVVIA_MAC_VIRTUAL.command` are the equivalents of `AVVIA_OBS.bat` and `AVVIA_VIRTUAL.bat`, and all the options below work the same way, for example `./AVVIA_MAC.command --mode naruto`. `AVVIA_MAC_NARUTO.command` and `AVVIA_MAC_GOKU.command` start those modes directly. For the virtual camera, install OBS Studio 30+ and start its virtual camera once so macOS installs the system extension, then stop it before launching the app. Unity Capture is Windows-only. Sound plays through the built-in `afplay`, so pygame is not installed on macOS.
+
 ## Getting started
 
 1. Double-click `AVVIA_LOCALE.bat`.
-2. In the start menu, choose **Normal Vanish**, **Naruto Vanish**, **Particles**, or **Goku** with the mouse or the `1`, `2`, `3`, and `4` keys.
+2. In the start menu, choose **Normal Vanish**, **Naruto Vanish**, or **Goku** with the mouse or the `1`, `2`, and `3` keys.
 3. Step out of the camera frame for 4 seconds while the background is captured. The terminal tells you when you can step back in.
 
 **Normal Vanish:** Raise your index and middle fingers in a V sign. The dissolve starts as soon as the gesture is recognized and lasts about 3.6 seconds.

@@ -14,13 +14,25 @@ from local_app.test_video_output import arguments
 
 
 class JoinedHandsTests(unittest.TestCase):
-    def test_joined_hands_start_effect_immediately(self):
+    def test_joined_hands_must_be_held_before_effect_starts(self):
         state = app.AppState(phase="ready")
         self.assertFalse(app.start_naruto_on_join(state, False, 1.0))
-        self.assertTrue(app.start_naruto_on_join(state, True, 1.1))
+        self.assertFalse(app.start_naruto_on_join(state, True, 1.1))
+        self.assertFalse(app.start_naruto_on_join(state, False, 1.2))  # Interrotto.
+        self.assertFalse(app.start_naruto_on_join(state, True, 1.3))
+        self.assertFalse(app.start_naruto_on_join(state, True, 1.5))
+        self.assertTrue(app.start_naruto_on_join(state, True, 1.3 + app.NARUTO_HOLD_SECONDS))
         self.assertEqual(state.phase, "naruto_vanishing")
-        self.assertEqual(state.vanish_started, 1.1)
-        self.assertFalse(app.start_naruto_on_join(state, True, 1.2))
+        self.assertFalse(app.start_naruto_on_join(state, True, 2.0))
+
+    def test_closed_fists_close_together_are_not_joined_hands(self):
+        fists = []
+        for center_x in (0.45, 0.55):
+            hand = self.hand(center_x)
+            for index in (8, 12, 16, 20):
+                hand[index] = SimpleNamespace(x=hand[index].x, y=0.58)
+            fists.append(hand)
+        self.assertFalse(joined_hands_from_landmarks(fists, 640, 480))
 
     @staticmethod
     def hand(center_x, upward=True):
@@ -144,6 +156,7 @@ class NarutoVideoLoopTests(unittest.TestCase):
         preview = []
         with ExitStack() as mocks:
             mocks.enter_context(patch.object(app, "parse_args", return_value=arguments(mode="naruto")))
+            mocks.enter_context(patch.object(app, "NARUTO_HOLD_SECONDS", 0.0))
             mocks.enter_context(patch.object(app, "download_models"))
             mocks.enter_context(patch.object(app, "open_camera", return_value=capture))
             mocks.enter_context(patch.object(app, "create_tasks", return_value=(segmenter, recognizer)))
